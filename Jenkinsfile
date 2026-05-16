@@ -6,6 +6,7 @@ pipeline {
     environment {
         IMAGE_NAME = "deepdevops11/jenkins-demo-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
+        echo "Done installation"
     }
 
     stages {
