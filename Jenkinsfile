@@ -6,14 +6,6 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
-    stages {
-
-        stage('Clone Code') {
-            steps {
-                git branch: 'main',
-                url: 'https://github.com/your-github-username/demo-app.git'
-            }
-        }
 
         stage('Build') {
             steps {
