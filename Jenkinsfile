@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "yourdockerhubusername/jenkins-demo-app"
+        IMAGE_NAME = "deepdevops11/jenkins-demo-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
+    stages {
 
         stage('Build') {
             steps {
@@ -30,11 +31,14 @@ pipeline {
 
         stage('Docker Login & Push') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
 
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
 
@@ -45,20 +49,22 @@ pipeline {
 
         stage('Run Container') {
             steps {
+
                 sh '''
                 docker stop demo-container || true
                 docker rm demo-container || true
 
                 docker run -d \
-                --name demo-container \
-                -p 5000:5000 \
-                $IMAGE_NAME:$IMAGE_TAG
+                  --name demo-container \
+                  -p 5000:5000 \
+                  $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
     }
 
     post {
+
         success {
             echo 'Pipeline executed successfully!'
         }
