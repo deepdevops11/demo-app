@@ -10,21 +10,38 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo "Installing dependencies..."
-                sh 'pip install -r requirements.txt'
+
+                echo "Creating virtual environment..."
+
+                sh '''
+                python3 -m venv venv
+
+                . venv/bin/activate
+
+                pip install --upgrade pip
+
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Test') {
             steps {
+
                 echo "Running test cases..."
-                sh 'pytest'
+
+                sh '''
+                . venv/bin/activate
+                pytest
+                '''
             }
         }
 
         stage('Docker Build') {
             steps {
+
                 echo "Building Docker Image..."
+
                 sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
@@ -52,6 +69,7 @@ pipeline {
 
                 sh '''
                 docker stop demo-container || true
+
                 docker rm demo-container || true
 
                 docker run -d \
